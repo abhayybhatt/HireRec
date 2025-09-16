@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Recommendation System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+    <style>
+        .loader {
+            border-top-color: #3498db;
+            -webkit-animation: spin 1s linear infinite;
+            animation: spin 1s linear infinite;
+        }
+        @-webkit-keyframes spin {
+            0% { -webkit-transform: rotate(0deg); }
+            100% { -webkit-transform: rotate(360deg); }
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans transition-colors duration-300">
+    <div class="container mx-auto p-4 md:p-8 max-w-4xl">
+        <header class="flex justify-between items-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-800 dark:text-white">Job Recommendation System</h1>
+            <button id="theme-toggle" class="p-2 rounded-full text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
+                <!-- Icon will be inserted by JS -->
+            </button>
+        </header>
+
+        <main>
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 md:p-8 mb-8">
+                <h2 class="text-2xl font-semibold mb-4">Upload Your Resume</h2>
+                <p class="text-gray-600 dark:text-gray-400 mb-6">Upload your resume in PDF or DOCX format to get personalized job recommendations based on your skills and experience.</p>
+                <form id="resume-form" class="space-y-6">
+                    <div>
+                        <label for="resume-upload" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Resume File</label>
+                        <input type="file" id="resume-upload" name="resume" accept=".pdf,.docx" class="block w-full text-sm text-gray-500 dark:text-gray-400
+                            file:mr-4 file:py-2 file:px-4
+                            file:rounded-full file:border-0
+                            file:text-sm file:font-semibold
+                            file:bg-blue-50 dark:file:bg-blue-900/40
+                            file:text-blue-700 dark:file:text-blue-300
+                            hover:file:bg-blue-100 dark:hover:file:bg-blue-900/60
+                        "/>
+                    </div>
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800">
+                        Get Recommendations
+                    </button>
+                </form>
+            </div>
+
+            <div id="results-container" class="hidden">
+                <h2 class="text-2xl font-semibold mb-4">Top Recommendations</h2>
+                <div id="loader" class="hidden my-8 flex justify-center items-center">
+                    <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 dark:border-gray-600 h-12 w-12"></div>
+                </div>
+                <div id="error-message" class="hidden p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
+                    <!-- Error content goes here -->
+                </div>
+                <div id="recommendations-list" class="space-y-4">
+                    <!-- Recommendations will be injected here -->
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const form = document.getElementById('resume-form');
+        const fileInput = document.getElementById('resume-upload');
+        const resultsContainer = document.getElementById('results-container');
+        const loader = document.getElementById('loader');
+        const errorMessage = document.getElementById('error-message');
+        const recommendationsList = document.getElementById('recommendations-list');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            if (fileInput.files.length === 0) {
+                showError("Please select a file to upload.");
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('resume', fileInput.files[0]);
+
+            // Reset UI
+            resultsContainer.classList.remove('hidden');
+            recommendationsList.innerHTML = '';
+            errorMessage.classList.add('hidden');
+            loader.classList.remove('hidden');
+
+            try {
+                const response = await fetch('http://127.0.0.1:5000/', {
+                    method: 'POST',
+                    body: formData,
+                });
+                
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'An unknown error occurred.');
+                }
+                
+                displayRecommendations(data);
+
+            } catch (error) {
+                showError(error.message || 'Failed to fetch recommendations.');
+            } finally {
+                loader.classList.add('hidden');
+            }
+        });
+
+        function displayRecommendations(recommendations) {
+            if (recommendations.length === 0) {
+                showError("No suitable job recommendations found based on your resume.");
+                return;
+            }
+
+            recommendations.forEach(job => {
+                const card = `
+                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border-l-4 ${getScoreColor(job.score)}">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h3 class="text-xl font-bold text-gray-800 dark:text-white">${job.title}</h3>
+                                <p class="text-gray-600 dark:text-gray-400">${job.company}</p>
+                            </div>
+                            <div class="text-lg font-semibold ${getScoreTextColor(job.score)}">
+                                ${job.score}% Match
+                            </div>
+                        </div>
+                    </div>
+                `;
+                recommendationsList.innerHTML += card;
+            });
+        }
+        
+        function showError(message) {
+            errorMessage.textContent = `Error: ${message}`;
+            errorMessage.classList.remove('hidden');
+        }
+
+        function getScoreColor(score) {
+            if (score > 75) return 'border-green-500';
+            if (score > 50) return 'border-yellow-500';
+            return 'border-red-500';
+        }
+
+        function getScoreTextColor(score) {
+            if (score > 75) return 'text-green-500';
+            if (score > 50) return 'text-yellow-500';
+            return 'text-red-500';
+        }
+
+        // --- Theme Toggle ---
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const htmlEl = document.documentElement;
+
+        const applyTheme = (theme) => {
+            if (theme === 'light') {
+                htmlEl.classList.remove('dark');
+                themeToggleBtn.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                    </svg>`; // Moon icon
+            } else {
+                htmlEl.classList.add('dark');
+                themeToggleBtn.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>`; // Sun icon
+            }
+        };
+
+        const toggleTheme = () => {
+            const currentTheme = htmlEl.classList.contains('dark') ? 'dark' : 'light';
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            localStorage.setItem('theme', newTheme);
+            applyTheme(newTheme);
+        };
+
+        themeToggleBtn.addEventListener('click', toggleTheme);
+
+        // Initialize theme on page load
+        const initialTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        applyTheme(initialTheme);
+    </script>
+</body>
+</html>
+
