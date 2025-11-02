@@ -12,35 +12,51 @@
     </script>
     <style>
         .btn-primary {
-            @apply w-full px-6 py-3 rounded-lg text-white font-semibold transition-all duration-200;
-            background-color: #2563eb; /* blue-600 for dark mode */
+            @apply px-8 py-3 rounded-lg font-semibold transition-all duration-200;
+            min-width: 200px;
+        }
+        /* Dark mode button styling */
+        .dark .btn-primary {
+            background-color: #2563eb; /* blue-600 */
+            color: white;
             box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
         }
-        /* Light mode button styling */
+        /* Light mode button styling - outline style */
         html:not(.dark) .btn-primary {
-            background-color: #059669; /* emerald-600 for light mode */
+            background-color: transparent;
+            color: #3b82f6; /* blue-500 */
+            border: 2px solid #3b82f6;
+            box-shadow: none;
         }
-        .btn-primary:hover:not(:disabled) {
-            background-color: #1d4ed8; /* blue-700 for dark mode */
+        .dark .btn-primary:hover:not(:disabled) {
+            background-color: #1d4ed8; /* blue-700 */
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
         html:not(.dark) .btn-primary:hover:not(:disabled) {
-            background-color: #047857; /* emerald-700 for light mode */
+            background-color: #3b82f6; /* blue-500 */
+            color: white;
+            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.2), 0 2px 4px -1px rgba(59, 130, 246, 0.1);
         }
-        .btn-primary:active:not(:disabled) {
-            background-color: #1e40af; /* blue-800 for dark mode */
+        .dark .btn-primary:active:not(:disabled) {
+            background-color: #1e40af; /* blue-800 */
         }
         html:not(.dark) .btn-primary:active:not(:disabled) {
-            background-color: #065f46; /* emerald-800 for light mode */
+            background-color: #2563eb; /* blue-600 */
+            color: white;
         }
         .btn-primary:disabled {
-            background-color: #93c5fd; /* blue-300 */
             cursor: not-allowed;
             opacity: 0.6;
             box-shadow: none;
         }
+        .dark .btn-primary:disabled {
+            background-color: #93c5fd; /* blue-300 */
+            color: white;
+        }
         html:not(.dark) .btn-primary:disabled {
-            background-color: #86efac; /* emerald-300 for light mode */
+            background-color: transparent;
+            color: #93c5fd; /* blue-300 */
+            border-color: #93c5fd;
         }
 
         .tab {
@@ -116,15 +132,17 @@
                     </div>
                 </div>
                 
-                <button type="submit" id="recommend-button" class="btn-primary">
-                    <span id="btn-text">Get Recommendations</span>
-                    <span id="btn-loader" class="hidden">
-                        <svg class="animate-spin h-5 w-5 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                    </span>
-                </button>
+                <div class="flex justify-center">
+                    <button type="submit" id="recommend-button" class="btn-primary">
+                        <span id="btn-text">Get Recommendations</span>
+                        <span id="btn-loader" class="hidden flex items-center justify-center">
+                            <svg class="animate-spin h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                        </span>
+                    </button>
+                </div>
             </form>
         </section>
 
@@ -138,7 +156,7 @@
             </div>
 
             <!-- Dropdown for Model Selection -->
-            <div class="mb-6">
+            <div class="mb-6 flex flex-col items-center">
                 <label for="model-select" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Select Recommendation Model</label>
                 <select id="model-select" class="w-full md:w-auto px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors">
                     <option value="tfidf">TF-IDF (Keywords) - Keyword Matching</option>
