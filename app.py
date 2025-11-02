@@ -5,17 +5,16 @@ from flask_cors import CORS
 
 # --- Import from our new 'core' modules ---
 from core.data_loader import load_job_data
-from core.parser import parse_resume
+from core.parser import parse_pdf, parse_docx
+# --- FIX: Correct function names to match recommender.py ---
 from core.recommender import (
-    get_recommendations_tfidf, 
-    get_recommendations_spacy,
-    preprocess_text_nltk, # Needed for NLTK package downloads
-    preprocess_text_spacy # Needed for spaCy model check
+    preprocess_text,
+    get_tfidf_recommendations,
+    get_spacy_recommendations
 )
+# --- END OF FIX ---
 
-# --- NLTK & SpaCy Setup ---
-# We run the downloads/checks here in the main app file
-# to ensure they are available when the server starts.
+# --- NLTK Setup ---
 print("Checking for NLTK data packages...")
 try:
     nltk.data.find('tokenizers/punkt')
@@ -35,12 +34,6 @@ except LookupError:
     nltk.download('wordnet')
 print("NLTK checks complete.")
 
-# Trigger the spaCy model check from the recommender module
-print("Checking for spaCy model...")
-preprocess_text_spacy("test") # This will trigger the print message if model is missing
-print("SpaCy check complete.")
-
-
 # --- Flask App Initialization ---
 app = Flask(__name__)
 CORS(app) # Enable CORS for all routes
@@ -48,14 +41,13 @@ app.config['UPLOAD_FOLDER'] = 'uploads'
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
 # --- Load Job Data ONCE ---
-# Load the job descriptions into memory when the app starts.
 print("Loading job data...")
 try:
     job_descriptions = load_job_data('jobs.csv')
     print(f"Successfully loaded {len(job_descriptions)} jobs.")
 except Exception as e:
     print(f"Error loading job data: {e}")
-    job_descriptions = [] # Start with an empty list if loading fails
+    job_descriptions = [] 
 
 # --- Flask Routes ---
 
@@ -87,7 +79,13 @@ def recommend():
         file.save(file_path)
 
         # 2. Text Extraction (using our parser module)
-        raw_text = parse_resume(file_path, file.filename)
+        raw_text = ""
+        if filename.lower().endswith('.pdf'):
+            raw_text = parse_pdf(file_path)
+        elif filename.lower().endswith('.docx'):
+            raw_text = parse_docx(file_path)
+        else:
+            return jsonify({"error": "Unsupported file type. Please upload a PDF or DOCX file."}), 400
         
         if not raw_text.strip():
              return jsonify({"error": "Could not extract text from the resume. The file might be empty or corrupted."}), 400
@@ -100,11 +98,20 @@ def recommend():
 
     # 3. Generate Recommendations (using our recommender module)
     try:
+        # --- FIX: We must pass the RAW text to the spaCy function ---
+        raw_resume_text = raw_text
+        # And the PREPROCESSED text to the TF-IDF function
+        processed_resume = preprocess_text(raw_resume_text)
+        # --- END OF FIX ---
+
+        if not processed_resume.strip():
+            return jsonify({"error": "Your resume does not contain enough relevant keywords after processing."}), 400
+
         # Get results from Model 1: TF-IDF
-        tfidf_recs = get_recommendations_tfidf(raw_text, job_descriptions)
+        tfidf_recs = get_tfidf_recommendations(processed_resume, job_descriptions, top_n=20)
         
         # Get results from Model 2: SpaCy
-        spacy_recs = get_recommendations_spacy(raw_text, job_descriptions)
+        spacy_recs = get_spacy_recommendations(raw_resume_text, job_descriptions, top_n=20)
 
         # Return both sets of recommendations
         return jsonify({
@@ -117,6 +124,7 @@ def recommend():
         return jsonify({"error": str(e)}), 400
     except Exception as e:
         # Catch any other unexpected errors
+        print(f"!!! SERVER CRASH: {e}") # Added for better debugging
         return jsonify({"error": f"An unexpected error occurred: {e}"}), 500
 
 # --- Main Entry Point ---

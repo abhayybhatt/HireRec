@@ -63,6 +63,7 @@ venv\Scripts\activate
 # macOS/Linux
 python3 -m venv venv
 source venv/bin/activate
+
 3. Install Dependencies
 This project requires several packages. Make sure you have Microsoft C++ Build Tools installed if you are on Windows, as scikit-learn needs it to compile.
 
