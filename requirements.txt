@@ -1,6 +1,9 @@
-Flask>=2.0
-scikit-learn
+Flask
+flask-cors
+pandas
+scikit-learn==1.3.2
 nltk
 PyPDF2
 python-docx
-Flask-Cors
+spacy
+pytest

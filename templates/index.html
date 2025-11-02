@@ -1,205 +1,330 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Job Recommendation System</title>
+    <!-- Load Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                }
-            }
-        }
-    </script>
-    <link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Custom Styles -->
     <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        /* Custom scrollbar for webkit browsers */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #4a5568; /* dark:gray-700 */
+            border-radius: 3px;
+        }
+        .dark ::-webkit-scrollbar-thumb {
+            background: #4a5568;
+        }
+        html.light ::-webkit-scrollbar-thumb {
+            background: #cbd5e0; /* light:gray-300 */
+        }
+        
+        /* Loading Spinner */
         .loader {
-            border-top-color: #3498db;
-            -webkit-animation: spin 1s linear infinite;
+            border: 4px solid #f3f3f3; /* Light grey */
+            border-top: 4px solid #3b82f6; /* Blue */
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
             animation: spin 1s linear infinite;
         }
-        @-webkit-keyframes spin {
-            0% { -webkit-transform: rotate(0deg); }
-            100% { -webkit-transform: rotate(360deg); }
+        html.light .loader {
+            border-color: #e2e8f0;
+            border-top-color: #3b82f6;
+        }
+        html.dark .loader {
+            border-color: #4b5563;
+            border-top-color: #3b82f6;
         }
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+
+        /* Tab Styles */
+        .tab-btn {
+            transition: all 0.3s ease;
+        }
+        .tab-btn.active {
+            border-bottom-color: #3b82f6; /* blue-500 */
+            color: #3b82f6;
+        }
+        html.light .tab-btn.active {
+            color: #2563eb; /* light:blue-600 */
+            border-bottom-color: #2563eb;
+        }
+        html.dark .tab-btn {
+            color: #9ca3af; /* dark:gray-400 */
+        }
+        html.dark .tab-btn.active {
+            color: #60a5fa; /* dark:blue-400 */
+            border-bottom-color: #60a5fa;
+        }
+        html.light .tab-btn {
+            color: #6b7280; /* light:gray-500 */
+        }
+
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
     </style>
 </head>
-<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 font-sans transition-colors duration-300">
-    <div class="container mx-auto p-4 md:p-8 max-w-4xl">
-        <header class="flex justify-between items-center mb-8">
-            <h1 class="text-3xl md:text-4xl font-bold text-gray-800 dark:text-white">Job Recommendation System</h1>
-            <button id="theme-toggle" class="p-2 rounded-full text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors">
-                <!-- Icon will be inserted by JS -->
-            </button>
-        </header>
+<body class="bg-gray-900 text-gray-100 flex flex-col min-h-screen">
 
-        <main>
-            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 md:p-8 mb-8">
-                <h2 class="text-2xl font-semibold mb-4">Upload Your Resume</h2>
-                <p class="text-gray-600 dark:text-gray-400 mb-6">Upload your resume in PDF or DOCX format to get personalized job recommendations based on your skills and experience.</p>
-                <form id="resume-form" class="space-y-6">
+    <!-- Header -->
+    <header class="bg-gray-800 shadow-md dark:bg-gray-950 dark:border-b dark:border-gray-800">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8 flex justify-between items-center h-16">
+            <h1 class="text-xl sm:text-2xl font-bold text-white">Job Recommendation System</h1>
+            <button id="theme-toggle" class="p-2 rounded-full text-gray-300 dark:text-gray-400 hover:bg-gray-700 dark:hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500">
+                <!-- Sun Icon -->
+                <svg id="theme-icon-light" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+                </svg>
+                <!-- Moon Icon -->
+                <svg id="theme-icon-dark" class="h-6 w-6 hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+                </svg>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-grow w-full">
+        <div class="max-w-3xl mx-auto">
+            
+            <!-- Upload Section -->
+            <div class="bg-gray-800 shadow-xl rounded-lg p-6 sm:p-8 dark:bg-gray-950 dark:border dark:border-gray-800">
+                <h2 class="text-2xl font-bold mb-4 text-white">Upload Your Resume</h2>
+                <p class="text-gray-300 dark:text-gray-400 mb-6">Upload your resume in PDF or DOCX format to get personalized job recommendations based on your skills and experience.</p>
+                
+                <form id="upload-form" class="space-y-6">
                     <div>
-                        <label for="resume-upload" class="block mb-2 text-sm font-medium text-gray-700 dark:text-gray-300">Resume File</label>
-                        <input type="file" id="resume-upload" name="resume" accept=".pdf,.docx" class="block w-full text-sm text-gray-500 dark:text-gray-400
-                            file:mr-4 file:py-2 file:px-4
-                            file:rounded-full file:border-0
-                            file:text-sm file:font-semibold
-                            file:bg-blue-50 dark:file:bg-blue-900/40
-                            file:text-blue-700 dark:file:text-blue-300
-                            hover:file:bg-blue-100 dark:hover:file:bg-blue-900/60
-                        "/>
+                        <label for="resume-file" class="block text-sm font-medium text-gray-300 dark:text-gray-400 mb-2">Resume File</label>
+                        <input type="file" id="resume-file" name="resume" accept=".pdf,.docx" class="block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer" required>
                     </div>
-                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg transition-transform transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-blue-300 dark:focus:ring-blue-800">
+                    
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 transition duration-150 ease-in-out">
                         Get Recommendations
                     </button>
                 </form>
             </div>
 
-            <div id="results-container" class="hidden">
-                <h2 class="text-2xl font-semibold mb-4">Top Recommendations</h2>
-                <div id="loader" class="hidden my-8 flex justify-center items-center">
-                    <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 dark:border-gray-600 h-12 w-12"></div>
+            <!-- Results Section -->
+            <div id="results-container" class="mt-12 hidden">
+                <h2 class="text-3xl font-bold mb-6 text-white">Top Recommendations</h2>
+
+                <!-- Error Message Display -->
+                <div id="error-message" class="hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-lg relative mb-6" role="alert">
+                    <strong class="font-bold">Error:</strong>
+                    <span class="block sm:inline" id="error-text"></span>
                 </div>
-                <div id="error-message" class="hidden p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg dark:bg-red-200 dark:text-red-800" role="alert">
-                    <!-- Error content goes here -->
+
+                <!-- Loading Spinner -->
+                <div id="loading-spinner" class="flex justify-center items-center h-32 hidden">
+                    <div class="loader"></div>
                 </div>
-                <div id="recommendations-list" class="space-y-4">
-                    <!-- Recommendations will be injected here -->
+
+                <!-- Tab Navigation -->
+                <div class="border-b border-gray-700 dark:border-gray-600 mb-4">
+                    <nav class="flex space-x-4" aria-label="Tabs">
+                        <button id="tab-tfidf" class="tab-btn active py-4 px-1 border-b-2 font-medium text-sm border-transparent" data-tab="tfidf">
+                            TF-IDF (Keyword Match)
+                        </button>
+                        <button id="tab-spacy" class="tab-btn py-4 px-1 border-b-2 font-medium text-sm border-transparent" data-tab="spacy">
+                            SpaCy (Semantic Match)
+                        </button>
+                    </nav>
+                </div>
+
+                <!-- Tab Content -->
+                <div>
+                    <!-- TF-IDF Results -->
+                    <div id="results-tfidf" class="tab-content active space-y-4">
+                        <!-- Results will be injected here -->
+                    </div>
+                    <!-- SpaCy Results -->
+                    <div id="results-spacy" class="tab-content space-y-4">
+                        <!-- Results will be injected here -->
+                    </div>
                 </div>
             </div>
-        </main>
-    </div>
 
+        </div>
+    </main>
+    
+    <!-- JavaScript -->
     <script>
-        const form = document.getElementById('resume-form');
-        const fileInput = document.getElementById('resume-upload');
-        const resultsContainer = document.getElementById('results-container');
-        const loader = document.getElementById('loader');
-        const errorMessage = document.getElementById('error-message');
-        const recommendationsList = document.getElementById('recommendations-list');
+        document.addEventListener('DOMContentLoaded', () => {
+            const uploadForm = document.getElementById('upload-form');
+            const resumeFile = document.getElementById('resume-file');
+            
+            const resultsContainer = document.getElementById('results-container');
+            const loadingSpinner = document.getElementById('loading-spinner');
+            const errorMessage = document.getElementById('error-message');
+            const errorText = document.getElementById('error-text');
+            
+            // Tab elements
+            const tabTfidf = document.getElementById('tab-tfidf');
+            const tabSpacy = document.getElementById('tab-spacy');
+            const resultsTfidf = document.getElementById('results-tfidf');
+            const resultsSpacy = document.getElementById('results-spacy');
+            const tabs = [tabTfidf, tabSpacy];
+            const contents = [resultsTfidf, resultsSpacy];
 
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
+            // --- Theme Toggle Logic ---
+            const themeToggle = document.getElementById('theme-toggle');
+            const themeIconLight = document.getElementById('theme-icon-light');
+            const themeIconDark = document.getElementById('theme-icon-dark');
 
-            if (fileInput.files.length === 0) {
-                showError("Please select a file to upload.");
-                return;
+            // Check and apply saved theme
+            if (localStorage.getItem('theme') === 'light' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: light)').matches)) {
+                setTheme('light');
+            } else {
+                setTheme('dark');
             }
 
-            const formData = new FormData();
-            formData.append('resume', fileInput.files[0]);
+            function setTheme(theme) {
+                if (theme === 'light') {
+                    document.documentElement.classList.remove('dark');
+                    document.documentElement.classList.add('light');
+                    themeIconLight.classList.remove('hidden');
+                    themeIconDark.classList.add('hidden');
+                    localStorage.setItem('theme', 'light');
+                } else {
+                    document.documentElement.classList.add('dark');
+                    document.documentElement.classList.remove('light');
+                    themeIconLight.classList.add('hidden');
+                    themeIconDark.classList.remove('hidden');
+                    localStorage.setItem('theme', 'dark');
+                }
+            }
 
-            // Reset UI
-            resultsContainer.classList.remove('hidden');
-            recommendationsList.innerHTML = '';
-            errorMessage.classList.add('hidden');
-            loader.classList.remove('hidden');
+            themeToggle.addEventListener('click', () => {
+                const currentTheme = localStorage.getItem('theme') || (document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+                setTheme(currentTheme === 'dark' ? 'light' : 'dark');
+            });
 
-            try {
-                const response = await fetch('http://127.0.0.1:5000/', {
-                    method: 'POST',
-                    body: formData,
-                });
+            // --- Form Submission Logic ---
+            uploadForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
                 
-                const data = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(data.error || 'An unknown error occurred.');
+                if (!resumeFile.files || resumeFile.files.length === 0) {
+                    displayError('Please select a resume file to upload.');
+                    return;
                 }
                 
-                displayRecommendations(data);
+                const formData = new FormData();
+                formData.append('resume', resumeFile.files[0]);
 
-            } catch (error) {
-                showError(error.message || 'Failed to fetch recommendations.');
-            } finally {
-                loader.classList.add('hidden');
+                // Reset UI
+                resultsContainer.classList.remove('hidden');
+                loadingSpinner.classList.remove('hidden');
+                errorMessage.classList.add('hidden');
+                resultsTfidf.innerHTML = '';
+                resultsSpacy.innerHTML = '';
+                // Reset to first tab
+                switchTab(tabTfidf, resultsTfidf);
+
+                try {
+                    const response = await fetch('http://127.0.0.1:5000/', {
+                        method: 'POST',
+                        body: formData,
+                    });
+
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(data.error || 'An unknown error occurred.');
+                    }
+                    
+                    // Display results in their respective tabs
+                    displayResults(data.tfidf_recommendations, resultsTfidf);
+                    displayResults(data.spacy_recommendations, resultsSpacy);
+
+                } catch (error) {
+                    displayError(error.message);
+                } finally {
+                    loadingSpinner.classList.add('hidden');
+                }
+            });
+
+            // --- Tab Switching Logic ---
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    const targetContent = document.getElementById(`results-${tab.dataset.tab}`);
+                    switchTab(tab, targetContent);
+                });
+            });
+
+            function switchTab(activeTab, activeContent) {
+                tabs.forEach(tab => tab.classList.remove('active'));
+                contents.forEach(content => content.classList.remove('active'));
+                activeTab.classList.add('active');
+                activeContent.classList.add('active');
+            }
+
+            // --- UI Helper Functions ---
+            function displayResults(recommendations, container) {
+                container.innerHTML = ''; // Clear previous results
+                
+                if (!recommendations || recommendations.length === 0) {
+                    container.innerHTML = '<p class="text-gray-400">No recommendations found.</p>';
+                    return;
+                }
+
+                recommendations.forEach(job => {
+                    const jobElement = document.createElement('div');
+                    jobElement.className = 'bg-gray-800 dark:bg-gray-900 shadow-lg rounded-lg p-5 border-l-4 dark:border-gray-700 transition-all duration-300 ease-in-out transform hover:scale-[1.02]';
+                    
+                    let borderColorClass = 'border-red-600';
+                    if (job.score > 70) borderColorClass = 'border-green-500';
+                    else if (job.score > 40) borderColorClass = 'border-yellow-500';
+                    
+                    jobElement.classList.add(borderColorClass);
+
+                    jobElement.innerHTML = `
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <h3 class="text-xl font-bold text-white">${job.title}</h3>
+                                <p class="text-gray-300 dark:text-gray-400">${job.company}</p>
+                            </div>
+                            <span class="text-xl font-bold ${getScoreColor(job.score)}">${job.score}% Match</span>
+                        </div>
+                    `;
+                    container.appendChild(jobElement);
+                });
+            }
+
+            function displayError(message) {
+                errorText.textContent = message;
+                errorMessage.classList.remove('hidden');
+                resultsTfidf.innerHTML = '';
+                resultsSpacy.innerHTML = '';
+            }
+
+            function getScoreColor(score) {
+                if (score > 70) return 'text-green-400';
+                if (score > 40) return 'text-yellow-400';
+                return 'text-red-400';
             }
         });
-
-        function displayRecommendations(recommendations) {
-            if (recommendations.length === 0) {
-                showError("No suitable job recommendations found based on your resume.");
-                return;
-            }
-
-            recommendations.forEach(job => {
-                const card = `
-                    <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 border-l-4 ${getScoreColor(job.score)}">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <h3 class="text-xl font-bold text-gray-800 dark:text-white">${job.title}</h3>
-                                <p class="text-gray-600 dark:text-gray-400">${job.company}</p>
-                            </div>
-                            <div class="text-lg font-semibold ${getScoreTextColor(job.score)}">
-                                ${job.score}% Match
-                            </div>
-                        </div>
-                    </div>
-                `;
-                recommendationsList.innerHTML += card;
-            });
-        }
-        
-        function showError(message) {
-            errorMessage.textContent = `Error: ${message}`;
-            errorMessage.classList.remove('hidden');
-        }
-
-        function getScoreColor(score) {
-            if (score > 75) return 'border-green-500';
-            if (score > 50) return 'border-yellow-500';
-            return 'border-red-500';
-        }
-
-        function getScoreTextColor(score) {
-            if (score > 75) return 'text-green-500';
-            if (score > 50) return 'text-yellow-500';
-            return 'text-red-500';
-        }
-
-        // --- Theme Toggle ---
-        const themeToggleBtn = document.getElementById('theme-toggle');
-        const htmlEl = document.documentElement;
-
-        const applyTheme = (theme) => {
-            if (theme === 'light') {
-                htmlEl.classList.remove('dark');
-                themeToggleBtn.innerHTML = `
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
-                    </svg>`; // Moon icon
-            } else {
-                htmlEl.classList.add('dark');
-                themeToggleBtn.innerHTML = `
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                    </svg>`; // Sun icon
-            }
-        };
-
-        const toggleTheme = () => {
-            const currentTheme = htmlEl.classList.contains('dark') ? 'dark' : 'light';
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            localStorage.setItem('theme', newTheme);
-            applyTheme(newTheme);
-        };
-
-        themeToggleBtn.addEventListener('click', toggleTheme);
-
-        // Initialize theme on page load
-        const initialTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-        applyTheme(initialTheme);
     </script>
+
 </body>
 </html>
-
