@@ -12,29 +12,39 @@
     </script>
     <style>
         .btn-primary {
-            @apply w-full px-6 py-3.5 rounded-xl text-white font-semibold transition-all duration-300;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            box-shadow: 0 4px 15px 0 rgba(102, 126, 234, 0.4);
-            transform: translateY(0);
+            @apply w-full px-6 py-3 rounded-lg text-white font-semibold transition-all duration-200;
+            background-color: #2563eb; /* blue-600 for dark mode */
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        }
+        /* Light mode button styling */
+        html:not(.dark) .btn-primary {
+            background-color: #059669; /* emerald-600 for light mode */
         }
         .btn-primary:hover:not(:disabled) {
-            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
-            box-shadow: 0 6px 20px 0 rgba(102, 126, 234, 0.5);
-            transform: translateY(-2px);
+            background-color: #1d4ed8; /* blue-700 for dark mode */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        html:not(.dark) .btn-primary:hover:not(:disabled) {
+            background-color: #047857; /* emerald-700 for light mode */
         }
         .btn-primary:active:not(:disabled) {
-            transform: translateY(0);
-            box-shadow: 0 2px 10px 0 rgba(102, 126, 234, 0.3);
+            background-color: #1e40af; /* blue-800 for dark mode */
+        }
+        html:not(.dark) .btn-primary:active:not(:disabled) {
+            background-color: #065f46; /* emerald-800 for light mode */
         }
         .btn-primary:disabled {
-            background: linear-gradient(135deg, #cbd5e1 0%, #94a3b8 100%);
-            box-shadow: none;
+            background-color: #93c5fd; /* blue-300 */
             cursor: not-allowed;
             opacity: 0.6;
+            box-shadow: none;
+        }
+        html:not(.dark) .btn-primary:disabled {
+            background-color: #86efac; /* emerald-300 for light mode */
         }
 
         .tab {
-            @apply px-4 py-2 font-medium rounded-md cursor-pointer transition-colors border-b-2 border-transparent;
+            @apply px-4 py-3 font-medium rounded-md cursor-pointer transition-colors border-b-2 border-transparent;
         }
         .tab-active {
             @apply border-blue-600 text-blue-600 dark:border-blue-500 dark:text-blue-500;
@@ -56,11 +66,14 @@
 
     <!-- Header -->
     <header class="w-full bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-10">
-        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
-            <h1 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-500">
-                Job Recommendation System
-            </h1>
-            <button id="theme-toggle" class="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
+        <div class="container mx-auto px-4 py-4 flex justify-center items-center relative">
+            <div class="text-center">
+                <h1 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-500">
+                    HirRec
+                </h1>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">AI-Powered Job Recommendations</p>
+            </div>
+            <button id="theme-toggle" class="absolute right-4 p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors">
                 <!-- Moon Icon -->
                 <svg id="theme-toggle-dark-icon" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
                 <!-- Sun Icon -->
@@ -76,22 +89,31 @@
     <main class="container mx-auto p-4 max-w-4xl">
         
         <!-- Upload Card -->
-        <section id="upload-card" class="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
-            <h2 class="text-2xl font-semibold mb-2 text-gray-900 dark:text-gray-100">Upload Your Resume</h2>
-            <p class="text-gray-600 dark:text-gray-300 mb-6">Upload your resume in PDF or DOCX format to get personalized job recommendations based on your skills and experience.</p>
+        <section id="upload-card" class="bg-white dark:bg-gray-800 p-6 md:p-8 rounded-xl shadow-lg border-2 border-dashed border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 transition-colors">
+            <div class="text-center mb-6">
+                <div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-blue-100 dark:bg-blue-900/30 mb-4">
+                    <svg class="w-8 h-8 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                    </svg>
+                </div>
+                <h2 class="text-2xl font-semibold mb-2 text-gray-900 dark:text-gray-100">Upload Your Resume</h2>
+                <p class="text-gray-600 dark:text-gray-300">Upload your resume in PDF or DOCX format to get personalized job recommendations based on your skills and experience.</p>
+            </div>
             
             <form id="resume-form" class="space-y-6">
-                <div>
-                    <label for="resume-file" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-2">Resume File</label>
-                    <input id="resume-file-input" type="file" name="resume" accept=".pdf,.docx" 
-                           class="block w-full text-sm text-gray-600 dark:text-gray-300
-                                  file:mr-4 file:py-2 file:px-4
-                                  file:rounded-lg file:border-0 file:text-sm file:font-semibold
-                                  file:bg-blue-50 file:text-blue-700
-                                  dark:file:bg-blue-900 dark:file:text-blue-300
-                                  hover:file:bg-blue-100 dark:hover:file:bg-blue-800
-                                  cursor-pointer"/>
-                    <span id="file-name" class="text-sm text-gray-500 dark:text-gray-400 mt-2">No file chosen</span>
+                <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 border border-gray-200 dark:border-gray-600">
+                    <label for="resume-file" class="block text-sm font-medium text-gray-700 dark:text-gray-200 mb-3">Resume File</label>
+                    <div class="flex items-center gap-4">
+                        <input id="resume-file-input" type="file" name="resume" accept=".pdf,.docx" 
+                               class="block flex-1 text-sm text-gray-600 dark:text-gray-300
+                                      file:mr-4 file:py-2.5 file:px-5
+                                      file:rounded-lg file:border-0 file:text-sm file:font-semibold
+                                      file:bg-blue-50 file:text-blue-700
+                                      dark:file:bg-blue-900 dark:file:text-blue-300
+                                      hover:file:bg-blue-100 dark:hover:file:bg-blue-800
+                                      cursor-pointer transition-colors"/>
+                        <span id="file-name" class="text-sm text-gray-500 dark:text-gray-400 font-medium min-w-[140px] text-right">No file chosen</span>
+                    </div>
                 </div>
                 
                 <button type="submit" id="recommend-button" class="btn-primary">
@@ -115,10 +137,13 @@
                 <p id="error-text" class="text-red-700 dark:text-red-300"></p>
             </div>
 
-            <!-- Tabs for Model Selection -->
-            <div id="tabs" class="flex space-x-2 border-b border-gray-300 dark:border-gray-700 mb-4">
-                <button id="tab-tfidf" class="tab tab-active" data-tab="tfidf">TF-IDF (Keywords)</button>
-                <button id="tab-spacy" class="tab" data-tab="spacy">SpaCy (Semantic)</button>
+            <!-- Dropdown for Model Selection -->
+            <div class="mb-6">
+                <label for="model-select" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Select Recommendation Model</label>
+                <select id="model-select" class="w-full md:w-auto px-4 py-2.5 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors">
+                    <option value="tfidf">TF-IDF (Keywords) - Keyword Matching</option>
+                    <option value="spacy">SpaCy (Semantic) - Contextual Meaning</option>
+                </select>
             </div>
 
             <!-- Tab Content: TF-IDF -->
@@ -199,24 +224,25 @@
             fileNameSpan.textContent = fileInput.files[0] ? fileInput.files[0].name : 'No file chosen';
         });
 
-        // --- Tab Switching ---
-        const tabs = document.querySelectorAll('.tab');
+        // --- Model Selection Dropdown ---
+        const modelSelect = document.getElementById('model-select');
         const tabContents = document.querySelectorAll('.tab-content');
-        tabs.forEach(tab => {
-            tab.addEventListener('click', () => {
-                const target = tab.getAttribute('data-tab');
-                
-                tabs.forEach(t => t.classList.remove('tab-active'));
-                tab.classList.add('tab-active');
-                
-                tabContents.forEach(c => {
-                    c.classList.remove('tab-content-active');
-                    if (c.id === `tab-content-${target}`) {
-                        c.classList.add('tab-content-active');
-                    }
-                });
+        
+        function switchModel(model) {
+            tabContents.forEach(c => {
+                c.classList.remove('tab-content-active');
+                if (c.id === `tab-content-${model}`) {
+                    c.classList.add('tab-content-active');
+                }
             });
+        }
+        
+        modelSelect.addEventListener('change', (e) => {
+            switchModel(e.target.value);
         });
+        
+        // Initialize with default selection
+        switchModel(modelSelect.value);
 
         // --- Form Submission (AJAX) ---
         const form = document.getElementById('resume-form');
@@ -296,13 +322,13 @@
             errorText.textContent = message;
             errorContainer.classList.remove('hidden');
             resultsSection.classList.remove('hidden');
-            document.getElementById('tabs').classList.add('hidden');
+            document.getElementById('model-select').parentElement.classList.add('hidden');
             tabContents.forEach(c => c.classList.remove('tab-content-active'));
         }
 
         function hideError() {
             errorContainer.classList.add('hidden');
-            document.getElementById('tabs').classList.remove('hidden');
+            document.getElementById('model-select').parentElement.classList.remove('hidden');
         }
 
         function displayResults(data) {
