@@ -12,16 +12,25 @@
     </script>
     <style>
         .btn-primary {
-            @apply w-full px-6 py-3 rounded-lg text-white font-semibold shadow-md transition-all duration-300;
-            background-color: #2563eb; /* blue-600 */
+            @apply w-full px-6 py-3.5 rounded-xl text-white font-semibold transition-all duration-300;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 4px 15px 0 rgba(102, 126, 234, 0.4);
+            transform: translateY(0);
         }
-        .btn-primary:hover {
-            @apply shadow-lg;
-            background-color: #1d4ed8; /* blue-700 */
+        .btn-primary:hover:not(:disabled) {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            box-shadow: 0 6px 20px 0 rgba(102, 126, 234, 0.5);
+            transform: translateY(-2px);
+        }
+        .btn-primary:active:not(:disabled) {
+            transform: translateY(0);
+            box-shadow: 0 2px 10px 0 rgba(102, 126, 234, 0.3);
         }
         .btn-primary:disabled {
-            background-color: #93c5fd; /* blue-300 */
+            background: linear-gradient(135deg, #cbd5e1 0%, #94a3b8 100%);
+            box-shadow: none;
             cursor: not-allowed;
+            opacity: 0.6;
         }
 
         .tab {
@@ -55,7 +64,10 @@
                 <!-- Moon Icon -->
                 <svg id="theme-toggle-dark-icon" class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
                 <!-- Sun Icon -->
-                <svg id="theme-toggle-light-icon" class="w-5 h-5 hidden" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm-7.071 0l-.707.707a1 1 0 001.414 1.414l.707-.707a1 1 0 00-1.414-1.414zM10 16a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM3.05 11.464l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zM16.95 11.464l-.707.707a1 1 0 001.414 1.414l.707-.707a1 1 0 00-1.414-1.414zM10 4a1 1 0 011-1V2a1 1 0 11-2 0v1a1 1 0 011-1zM3.05 8.536l-.707-.707a1 1 0 001.414 1.414l.707.707a1 1 0 001.414-1.414zM16.95 8.536l.707-.707a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414z" fill-rule="evenodd" clip-rule="evenodd"></path></svg>
+                <svg id="theme-toggle-light-icon" class="w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="4" stroke-width="2" stroke-linecap="round"></circle>
+                    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" stroke-width="2" stroke-linecap="round"></path>
+                </svg>
             </button>
         </div>
     </header>
