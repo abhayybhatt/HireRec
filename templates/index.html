@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Job Recommendation System</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
     <style>
         .btn-primary {
             @apply w-full px-6 py-3 rounded-lg text-white font-semibold shadow-md transition-all duration-300;
@@ -140,13 +145,15 @@
         function setTheme(theme) {
             if (theme === 'dark') {
                 docHtml.classList.add('dark');
-                darkIcon.classList.remove('hidden');
-                lightIcon.classList.add('hidden');
+                // Show sun icon when in dark mode (to switch to light mode)
+                lightIcon.classList.remove('hidden');
+                darkIcon.classList.add('hidden');
                 localStorage.setItem('theme', 'dark');
             } else {
                 docHtml.classList.remove('dark');
-                lightIcon.classList.remove('hidden');
-                darkIcon.classList.add('hidden');
+                // Show moon icon when in light mode (to switch to dark mode)
+                darkIcon.classList.remove('hidden');
+                lightIcon.classList.add('hidden');
                 localStorage.setItem('theme', 'light');
             }
         }
