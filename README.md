@@ -160,24 +160,6 @@ If you encounter errors during setup or model loading:
 | **Testing**    | pytest                                            |
 | **Dataset**    | CSV (job postings dataset)                        |
 
----
-
-## 📂 Example Folder Overview
-
-job-recommender/
-├── core/
-│   ├── data_loader.py
-│   ├── parser.py
-│   └── recommender.py
-├── templates/
-│   └── index.html
-├── uploads/
-├── tests/
-│   └── test_recommender.py
-├── app.py
-└── requirements.txt
-
----
 
 ## 🧪 Example Usage
 
