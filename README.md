@@ -30,30 +30,15 @@ The frontend allows you to upload a resume and instantly see results from both m
 
 ---
 
-## 🗂️ Project Structure
+## 📂 Project Structure
 
-job-recommender/
-├── venv/
-├── core/
-│   ├── **init**.py          # Makes 'core' a Python package
-│   ├── data_loader.py       # Loads and manages the CSV data
-│   ├── parser.py            # Handles PDF/DOCX resume parsing
-│   └── recommender.py       # Holds both TF-IDF & spaCy models
-│
-├── templates/
-│   └── index.html           # Frontend user interface
-│
-├── tests/
-│   └── test_recommender.py  # Automated unit tests
-│
-├── uploads/                 # Temporary folder for file uploads
-│
-├── app.py                   # Main Flask app (handles routes)
-├── jobs.csv                 # (Not included) Your dataset of job postings
-├── README.md                # This file
-└── requirements.txt         # Python packages
+
+![alt text](image.png)
 
 ---
+
+> 💡 **Tip:** Make sure your `.gitignore` includes `venv/` and `__pycache__/` so your virtual environment and cache files don’t get pushed to GitHub.
+
 
 ## ⚙️ Setup and Installation
 
