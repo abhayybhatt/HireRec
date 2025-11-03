@@ -1,108 +1,226 @@
-HireRec: A Job Application Recommendation System
-A dual-model NLP application built with Python and Flask that intelligently matches a user's resume to a large dataset of job postings.
 
-This project implements and compares two distinct natural language processing models to provide job recommendations:
+---
 
-TF-IDF (Keyword-Based): A classic NLP model that matches exact keywords and phrases between the resume and job descriptions.
+# HireRec: A Job Application Recommendation System
 
-Semantic Search (spaCy): A modern, vector-based model that understands the contextual meaning of words (e.g., it knows "React" and "Angular" are both frontend frameworks).
+A dual-model NLP application built with **Python** and **Flask** that intelligently matches a user's resume to a large dataset of job postings.
 
-The frontend allows you to upload a resume and instantly see the results from both models side-by-side in a tabbed view, making it an excellent tool for comparing the effectiveness of these two different AI approaches.
+---
 
-Features
-Dual Recommendation Models: Get results from both TF-IDF and spaCy (semantic) models at the same time.
+## 🧠 Overview
 
-Tabbed Interface: Easily switch between model results to compare recommendations.
+This project implements and compares two distinct natural language processing (NLP) models to provide job recommendations:
 
-Dynamic File Upload: Supports .pdf and .docx resume formats.
+* **TF-IDF (Keyword-Based):** A classic NLP model that matches exact keywords and phrases between the resume and job descriptions.
+* **Semantic Search (spaCy):** A modern, vector-based model that understands the contextual meaning of words (e.g., it knows “React” and “Angular” are both frontend frameworks).
 
-Large Dataset: Uses a CSV of thousands of real job postings (not included in repo).
+The frontend allows you to upload a resume and instantly see results from both models **side-by-side in a tabbed view**, making it an excellent tool for comparing the effectiveness of these two different AI approaches.
 
-Light/Dark Mode: Includes a theme-switching toggle for the UI.
+---
 
-Modular Backend: Code is structured into a clean core/ directory for maintainability.
+## ✨ Features
 
-Automated Tests: Includes pytest unit tests for the core recommendation logic.
+* **Dual Recommendation Models:** Get results from both TF-IDF and spaCy (semantic) models simultaneously.
+* **Tabbed Interface:** Easily switch between model results to compare recommendations.
+* **Dynamic File Upload:** Supports `.pdf` and `.docx` resume formats.
+* **Large Dataset:** Uses a CSV of thousands of real job postings (not included in repo).
+* **Light/Dark Mode:** Includes a theme-switching toggle for the UI.
+* **Modular Backend:** Code is structured into a clean `core/` directory for maintainability.
+* **Automated Tests:** Includes pytest unit tests for the core recommendation logic.
 
-Project Structure
+---
+
+## 🗂️ Project Structure
+
 job-recommender/
 ├── venv/
 ├── core/
-│   ├── __init__.py           # Makes 'core' a Python package
-│   ├── data_loader.py        # Loads and manages the CSV data
-│   ├── parser.py             # Handles PDF/DOCX resume parsing
-│   └── recommender.py        # Holds both TF-IDF & SpaCy models
+│   ├── **init**.py          # Makes 'core' a Python package
+│   ├── data_loader.py       # Loads and manages the CSV data
+│   ├── parser.py            # Handles PDF/DOCX resume parsing
+│   └── recommender.py       # Holds both TF-IDF & spaCy models
 │
 ├── templates/
-│   └── index.html            # Frontend user interface
+│   └── index.html           # Frontend user interface
 │
 ├── tests/
-│   └── test_recommender.py   # Automated unit tests
+│   └── test_recommender.py  # Automated unit tests
 │
-├── uploads/                  # Temporary folder for file uploads
+├── uploads/                 # Temporary folder for file uploads
 │
-├── app.py                    # Main Flask app (handles routes)
-├── jobs.csv                  # (Not included) Your dataset of job postings
-├── README.md                 # This file
-└── requirements.txt          # Python packages
+├── app.py                   # Main Flask app (handles routes)
+├── jobs.csv                 # (Not included) Your dataset of job postings
+├── README.md                # This file
+└── requirements.txt         # Python packages
 
-Setup and Installation
+---
+
+## ⚙️ Setup and Installation
+
 Follow these steps to get the project running locally.
 
-1. Clone the Repository
+### 1. Clone the Repository
 
 git clone [your-github-repo-url]
 cd job-recommender
 
-2. Create and Activate a Virtual Environment
+---
 
-# Windows
+### 2. Create and Activate a Virtual Environment
+
+#### 🪟 Windows
+
 python -m venv venv
 venv\Scripts\activate
 
-# macOS/Linux
+#### 🐧 macOS/Linux
+
 python3 -m venv venv
 source venv/bin/activate
 
-3. Install Dependencies
-This project requires several packages. Make sure you have Microsoft C++ Build Tools installed if you are on Windows, as scikit-learn needs it to compile.
+---
 
-# Upgrade pip (recommended)
+### 3. Install Dependencies
+
+This project requires several Python packages to function correctly.
+If you are on **Windows**, make sure you have **Microsoft C++ Build Tools** installed (as scikit-learn needs it to compile).
+
+#### 🔹 Upgrade pip (recommended)
+
 python -m pip install --upgrade pip
 
-# Install all required packages
+#### 🔹 Install all required packages
+
 pip install -r requirements.txt
 
-4. Download the spaCy Language Model
-The semantic model requires a small language model from spaCy.
+---
+
+### 4. Download the spaCy Language Model
+
+The semantic model uses the small English language model from **spaCy**.
 
 python -m spacy download en_core_web_sm
 
-5. Get the Job Dataset
+---
+
+### 5. Get the Job Dataset
+
 This project is designed to work with a large CSV of job postings.
 
-Download a dataset (e.g., from Kaggle).
+1. Download a dataset (e.g., from Kaggle).
+2. Rename the downloaded file to **jobs.csv**.
+3. Place jobs.csv in the **root** of the project folder.
 
-Rename the file to jobs.csv.
+**Note:**
+The application expects the CSV to include the columns:
+`job_title`, `company`, and `job_summary`.
+If your CSV has different column names, update the `column_mapping` dictionary in `core/data_loader.py`.
 
-Place jobs.csv in the root of the project folder.
+---
 
-Note: The code is set to look for columns named job_title, company, and job_summary. If your CSV uses different names, you must update the column_mapping dictionary in core/data_loader.py.
+## 🚀 How to Run
 
-How to Run
-1. Run the Flask Application
-With your virtual environment active, start the backend server:
+### 1. Start the Flask Application
+
+With your virtual environment active, run:
 
 python app.py
-Your server will be running at http://127.0.0.1:5000.
 
-2. Open the Frontend
-Open the templates/index.html file directly in your web browser (e.g., Chrome, Firefox).
+Your server will start and be available at:
+[http://127.0.0.1:5000](http://127.0.0.1:5000)
 
-You can now upload your resume and get recommendations.
+---
 
-3. Run Automated Tests
-To verify that the core logic is working correctly, you can run the built-in tests using pytest command:
+### 2. Launch the Frontend
+
+Open the following file directly in your browser (e.g., Chrome, Firefox):
+
+templates/index.html
+
+You can now upload your **resume** and get **job recommendations** instantly.
+
+---
+
+### 3. Run Automated Tests
+
+To verify that the core logic is working correctly, run the built-in tests using **pytest**:
 
 pytest
+
 You should see all tests passing in your terminal.
+
+---
+
+## 🧩 Troubleshooting
+
+If you encounter errors during setup or model loading:
+
+* Ensure your **virtual environment** is activated.
+* Double-check that all dependencies from requirements.txt are installed.
+* Verify that the **CSV file path** is correct and named jobs.csv.
+* For spaCy-related errors, rerun:
+  python -m spacy download en_core_web_sm
+
+---
+
+## 🧠 Technologies Used
+
+| Category       | Technology                                        |
+| -------------- | ------------------------------------------------- |
+| **Backend**    | Python, Flask                                     |
+| **NLP Models** | TF-IDF, spaCy (Semantic Search)                   |
+| **Libraries**  | scikit-learn, pandas, numpy, PyMuPDF, python-docx |
+| **Frontend**   | HTML, CSS, JavaScript                             |
+| **Testing**    | pytest                                            |
+| **Dataset**    | CSV (job postings dataset)                        |
+
+---
+
+## 📂 Example Folder Overview
+
+job-recommender/
+├── core/
+│   ├── data_loader.py
+│   ├── parser.py
+│   └── recommender.py
+├── templates/
+│   └── index.html
+├── uploads/
+├── tests/
+│   └── test_recommender.py
+├── app.py
+└── requirements.txt
+
+---
+
+## 🧪 Example Usage
+
+1. Start the Flask server:
+   python app.py
+
+2. Visit the web app in your browser:
+   [http://127.0.0.1:5000](http://127.0.0.1:5000)
+
+3. Upload your **resume** (.pdf or .docx).
+
+4. Choose a model (TF-IDF or spaCy) to get job recommendations.
+
+5. Compare both models’ recommendations side-by-side.
+
+---
+
+## 🧰 Future Improvements
+
+* Add more advanced embedding models (e.g., Sentence Transformers, BERT).
+* Integrate database storage for uploaded resumes and job results.
+* Add user authentication and personalized dashboards.
+* Expand UI with filters (location, salary range, skill match %).
+
+---
+
+## 📄 License
+
+This project is open-source and available under the **MIT License**.
+You are free to use, modify, and distribute it with proper attribution.
+
+---
