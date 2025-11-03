@@ -33,7 +33,8 @@ The frontend allows you to upload a resume and instantly see results from both m
 ## 📂 Project Structure
 
 
-![alt text](image.png)
+<img width="351" height="434" alt="image" src="https://github.com/user-attachments/assets/1223f4d2-5fee-462c-9fe4-0cfc1e4ecea1" />
+
 
 ---
 
